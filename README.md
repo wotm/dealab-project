@@ -28,7 +28,7 @@ Moreover, you will need [Node JS](https://nodejs.org/en/download/) to run the ap
 
 ## Authors
 
-* **Romain Renard** - *Initial work* - [Romain Renard](https://github.com/romain-renard)
+* **wotm** - *Initial work* - [wotm](https://github.com/wotm)
 
 ## Acknowledgments
 
