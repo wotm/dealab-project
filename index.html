@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Dealabs RSS Flux</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row"></div>
+    </div>
+
+    <script>
+      if (typeof module === 'object') { window.module = module; module = undefined;}
+    </script>
+
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script>if (window.module) module = window.module;</script>
+
+    <script>
+      let Parser = require('rss-parser');
+      let parser = new Parser({
+        customFields: { 
+          item: [
+            ['media:content', 'image'],
+            ['pepper:merchant', 'articleInfos'],
+          ]
+        }
+      });
+  
+      (async () => {
+      let feed = await parser.parseURL('https://www.dealabs.com/rss/tout');
+      feed.items.forEach(item => {
+        i = 0;
+
+        // Generating an unique product id
+        var productId = new Date().valueOf();
+
+        $(".container").append("<div id=\"product-" +productId+ "\" class=\"row\"></div>");
+
+        // Element products list
+        $("#product-" +productId).append("<div class=\"card\" class=\"col-sm\" ></div>");
+        
+        // Checking if the url image attribute exists
+        if (item.hasOwnProperty('image'))
+          if (item.image["$"].hasOwnProperty('url'))
+            $("#product-" +productId+ " .card").append("<img class=\"card-img-top\" src=\"" +item.image["$"].url+ "\" alt=\"Card image capt\" >");
+
+        $("#product-" +productId+ " .card").append("<div class=\"card-body\"></div>");
+
+        $("#product-" +productId+ " .card .card-body").append("<h5 class=\"card-title\" id=\"title\"></h5>");
+        $("#product-" +productId+ " .card .card-body").append("<h5 class=\"card-title\" id=\"pubDate\"></h5>");
+        $("#product-" +productId+ " .card .card-body").append("<h5 class=\"card-title\" id=\"category\"></h5>");
+
+        // Checking if the product price exists
+        if (item.hasOwnProperty('articleInfos'))
+          if (item.articleInfos["$"].hasOwnProperty('price'))
+            $("#product-" +productId+ " .card .card-body").append("<h5 class=\"card-title\" id=\"price\"></h5><hr>");
+
+        $("#product-" +productId+ " .card .card-body").append("<p class=\"card-text\" id=\"content\"></p>");
+        $("#product-" +productId+ " .card .card-body").append("<a href=\"\" class=\"btn btn-primary\" id=\"link\" target=\"_blank\">Fiche produit</a>");
+
+        $("#product-" +productId+ " .card .card-body #title").text(item.title);
+
+        item.categories.forEach(category => {
+          $("#product-" +productId+ " .card .card-body #category").text(category);
+        });
+
+        // Checking if the product price exists
+        if (item.hasOwnProperty('articleInfos'))
+          if (item.articleInfos["$"].hasOwnProperty('price'))
+            $("#product-" +productId+ " .card .card-body #price").text(item.articleInfos["$"].price);
+
+        $("#product-" +productId+ " .card .card-body #link").attr("href", item.link); 
+        $("#product-" +productId+ " .card .card-body #content").html(item.content);
+        $("#product-" +productId+ " .card .card-body #pubDate").text(item.pubDate);
+
+        i++;
+      });
+ 
+    })();
+  
+      // You can also require other files to run in this process
+      require('./renderer.js')
+    </script>
+
+  </body>
+</html>
